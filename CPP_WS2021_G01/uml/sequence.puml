@@ -1,0 +1,34 @@
+@startuml
+== Initialization ==
+GUI -> Logic: set server or client mode
+alt server
+	Logic -> Network: init server
+	Network -> Network: wait for connection
+	Logic -> Network: field parameters
+else client
+	Logic -> Network: init client
+	Network -> Network: connect to server
+	Logic <- Network: field parameters
+end
+Logic -> Logic: init field models
+Logic -> GUI: start displaying fields
+loop event loop
+	GUI -> Logic: fields changed?
+	Logic -->> GUI: fields
+	GUI -> GUI: display fields
+end
+loop for every ship
+	GUI -> Logic: place ship
+end
+Logic -> Network: ready
+== Game ==
+loop
+	Logic -> GUI: our turn
+	GUI -> Logic: place shot
+	Logic -> Network: send shot
+	Network -->> Logic: hit/miss?
+	Logic -> Logic: wait for opponent
+	Network -> Logic: received shot
+	Logic -->> Network: hit/miss?
+end
+@enduml

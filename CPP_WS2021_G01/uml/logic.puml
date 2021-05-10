@@ -1,0 +1,60 @@
+@startuml
+
+enum Orientation {
+	VERTICAL
+	HORIZONTAL
+}
+enum Field {
+	NOT_SHOT
+	SHOT
+}
+enum Shot {
+	HIT
+	MISS
+}
+
+class Game {
+	+placeShot(int x, int y): bool
+	+template<class T> placeShip(T, int x, int y, Orientation o): bool
+	-shots[10][10]: Shot
+	-ships: std::vector<Ship>
+	-grid[10][10]: Field
+}
+
+abstract Ship {
+	-occupied[]: const std::shared_ptr<Field>
+	+Ship(std::shared_ptr<Field> occupied[])
+	+{abstract} gotDestroyed(): bool
+}
+class Battleship {
+	-occupied[5]: std::shared_ptr<Field>
+	+gotDestroyed(): bool
+}
+class Cruiser {
+	-occupied[4]: std::shared_ptr<Field>
+	+gotDestroyed(): bool
+}
+class Destroyer {
+	-occupied[3]: std::shared_ptr<Field>
+	+gotDestroyed(): bool
+}
+class Submarine {
+	-occupied[2]: std::shared_ptr<Field>
+	+gotDestroyed(): bool
+}
+
+Ship <|-- Battleship
+Ship <|-- Cruiser
+Ship <|-- Destroyer
+Ship <|-- Submarine
+
+Game *-- Field
+Game -- Orientation: uses Orientation to place ships vertically or horizontally
+Game *-- Shot
+Game *-- Ship
+Ship *-- Field
+Game --> Ship: checks whether the ships got destoyed
+
+hide enum empty methods
+
+@enduml
